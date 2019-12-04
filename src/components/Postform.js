@@ -1,80 +1,70 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { createPost } from '../actions/postActions';
 
- class PostForm extends Component {
+class PostForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: '',
+      body: ''
+    };
 
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
 
-    constructor(props)
-    {
-          super(props)
-         this.state={
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
 
-           Title:'',
-           body:' '
-         }
+  onSubmit(e) {
+    e.preventDefault();
 
-        this.onChange = this.onChange.bind(this);
+    const post = {
+      title: this.state.title,
+      body: this.state.body
+    };
 
-        this.onSubmit = this.onSubmit.bind(this);
-    }
+    this.props.createPost(post);
+  }
 
-    onChange(e)
-    {
-           this.setState({ [e.target.name]:e.target.value});
-
-    }
-
-    onSubmit(e)
-    {
-
-            e.preventDefault();
-            const post={
-                Title:this.state.Title,
-                body:this.state.body
-            }   
-
-            fetch('https://jsonplaceholder.typicode.com/posts' , {
-               
-            method:'POST',
-            headers:{
-                'content-type': 'application/json'   
-            },
-            body: JSON.stringify(post)
-            })
-            .then(res => res.json())
-            .then(data => console.log(data));
-    }
-
-
-    render() {
-        return (
-            <div>
-                <h1>Add Post </h1>
-  <form  onSubmit={this.onSubmit}>
-    <div>
-    <label>
-    Title :
-    </label><br />
-    <input type="text" name="Title"  onChange={this.onChange} value={this.state.title} />
-    </div>
-
-    
-    <div>
-    <br />
-    <label>
-    Body:
-    </label><br />
-    <textarea name="body"  onChange={this.onChange} value={this.state.body}/>
-    </div>
-
-    <br />
-    <button type="submit">Submit</button>
-    <button></button>
-  
-  </form>
-
-                </div>
-        )
-    }
+  render() {
+    return (
+      <div>
+        <h1>Add Post</h1>
+        <form onSubmit={this.onSubmit}>
+          <div>
+            <label>Title: </label>
+            <br />
+            <input
+              type="text"
+              name="title"
+              onChange={this.onChange}
+              value={this.state.title}
+            />
+          </div>
+          <br />
+          <div>
+            <label>Body: </label>
+            <br />
+            <textarea
+              name="body"
+              onChange={this.onChange}
+              value={this.state.body}
+            />
+          </div>
+          <br />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    );
+  }
 }
 
-export default PostForm;
+PostForm.propTypes = {
+  createPost: PropTypes.func.isRequired
+};
+
+export default connect(null, { createPost })(PostForm);
